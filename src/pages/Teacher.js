@@ -11,6 +11,12 @@ const Teacher = () => {
     collection: "",
     question: "",
     type: "MC",
+    op1: "",
+    op2: "",
+    op3: "",
+    op4: "",
+    prompt: "",
+    answer: "",
   });
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [editedQuestion, setEditedQuestion] = useState({
@@ -26,11 +32,9 @@ const Teacher = () => {
 
   const [data, setData] = useState("");
 
-
   useEffect(() => {
     fetchQuestions();
   }, [data]);
-
 
   const fetchQuestions = async () => {
     try {
@@ -105,6 +109,16 @@ const Teacher = () => {
     }
   };
 
+  const handleBulkDelete = async (collection_name) => {
+    try {
+      await axios.delete(`http://localhost:8000/bulkDelete/${collection_name}`);
+      fetchQuestions();
+    } catch (error) {
+      console.error("Error deleting question:", error);
+    }
+  };
+
+
   const handleAddQuestion = async () => {
     try {
       const { data } = await axios.post(
@@ -136,13 +150,6 @@ const Teacher = () => {
     setNewQuestion((prevQuestion) => ({
       ...prevQuestion,
       [name]: value,
-      question: '', // Reset the 'question' field to an empty string
-      op1: '', // Reset the 'op1' field to an empty string
-      op2: '', // Reset the 'op2' field to an empty string
-      op3: '', // Reset the 'op3' field to an empty string
-      op4: '', // Reset the 'op4' field to an empty string
-      prompt: '', // Reset the 'prompt' field to an empty string
-      answer: '', // Reset the 'answer' field to an empty string
     }));
   };
 
@@ -154,23 +161,35 @@ const Teacher = () => {
   };
 
   const allowAddQuestion = () => {
-
     // newQuestion.type === "MC"
 
     if (newQuestion.type === "SA" || newQuestion.type === "Rearrange") {
-      return newQuestion.collection === "" || newQuestion.question === "" || newQuestion.answer === ""
+      return (
+        newQuestion.collection === "" ||
+        newQuestion.question === "" ||
+        newQuestion.answer === ""
+      );
+    } else if (newQuestion.type === "Prompt") {
+      return (
+        newQuestion.collection === "" ||
+        newQuestion.question === "" ||
+        newQuestion.prompt === "" ||
+        newQuestion.answer === ""
+      );
+    } else if (newQuestion.type === "MC") {
+      return (
+        newQuestion.collection === "" ||
+        newQuestion.question === "" ||
+        newQuestion.prompt === "" ||
+        newQuestion.answer === "" ||
+        newQuestion.op1 === "" ||
+        newQuestion.op2 === "" ||
+        newQuestion.op3 === "" ||
+        newQuestion.op4 === ""
+      );
     }
-
-    else if (newQuestion.type === "Prompt") {
-      return newQuestion.collection === "" || newQuestion.question === "" || newQuestion.prompt === "" || newQuestion.answer === ""
-    }
-
-    else if (newQuestion.type === "MC") {
-      return newQuestion.collection === "" || newQuestion.question === "" || newQuestion.prompt === "" || newQuestion.answer === ""
-        || newQuestion.op1 === "" || newQuestion.op2 === "" || newQuestion.op3 === "" || newQuestion.op4 === "" 
-    }
-    return true
-  }
+    return true;
+  };
 
   return (
     <div className="App">
@@ -286,11 +305,15 @@ const Teacher = () => {
               </label>
             </div>
 
-            <button onClick={handleAddQuestion} disabled={allowAddQuestion()}>Add Question</button>
+            <button onClick={handleAddQuestion} disabled={allowAddQuestion()}>
+              Add Question
+            </button>
           </div>
         )}
 
-        {newQuestion.type === "Import" && <Parsing collectionName={newQuestion.collection} setData={setData}  />}
+        {newQuestion.type === "Import" && (
+          <Parsing collectionName={newQuestion.collection} setData={setData} />
+        )}
       </div>
 
       {Object.entries(
@@ -303,12 +326,16 @@ const Teacher = () => {
         }, {})
       ).map(([collection, group]) => (
         <div key={collection}>
-          <h2
-            onClick={() => toggleGroupCollapse(collection)}
-            style={{ cursor: "pointer" }}
-          >
-            {collection}
-          </h2>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <h2
+              onClick={() => toggleGroupCollapse(collection)}
+              style={{ cursor: "pointer", marginRight: "10px" }}
+            >
+              {collection}
+            </h2>
+            {/* TODO: Add rename collection */}
+            <button onClick={() => handleBulkDelete(collection)}>Delete</button>
+          </div>
           {!collapsedGroups[collection] && (
             <ul>
               {group.map((question) => (
