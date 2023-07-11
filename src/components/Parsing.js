@@ -6,13 +6,12 @@ import toast from 'react-hot-toast';
 // Allowed extensions for input file
 const allowedExtensions = ["csv"];
 
-export const Parsing = ({collectionName}) => {
+export const Parsing = ({collectionName, setData }) => {
 
   // It will store the file uploaded by the user
   const [file, setFile] = useState("");
 
   const [error, setError] = useState("");
-  const [data, setData] = useState("");
 
   // This function will be called when
   // the file input changes

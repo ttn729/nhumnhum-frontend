@@ -24,11 +24,13 @@ const Teacher = () => {
   });
   const [collapsedGroups, setCollapsedGroups] = useState({});
 
+  const [data, setData] = useState("");
 
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [data]);
+
 
   const fetchQuestions = async () => {
     try {
@@ -262,7 +264,7 @@ const Teacher = () => {
           </div>
         )}
 
-        {newQuestion.type === "Import" && <Parsing collectionName={newQuestion.collection} />}
+        {newQuestion.type === "Import" && <Parsing collectionName={newQuestion.collection} setData={setData}  />}
       </div>
 
       {Object.entries(
