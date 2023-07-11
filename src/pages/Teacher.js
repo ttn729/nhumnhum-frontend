@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
+import { Parsing } from "../components/Parsing";
 
 const Teacher = () => {
-  const validTypes = ["MC", "SA", "Rearrange", "Prompt"];
+  const validTypes = ["MC", "SA", "Rearrange", "Prompt", "Import"];
   const [questions, setQuestions] = useState([]);
+
   const [newQuestion, setNewQuestion] = useState({
     collection: "",
     question: "",
@@ -21,6 +23,8 @@ const Teacher = () => {
     answer: "",
   });
   const [collapsedGroups, setCollapsedGroups] = useState({});
+
+
 
   useEffect(() => {
     fetchQuestions();
@@ -172,7 +176,7 @@ const Teacher = () => {
           </label>
         </div>
 
-        <div>
+        {newQuestion.type !== "Import" && (
           <label>
             Question:
             <input
@@ -182,7 +186,8 @@ const Teacher = () => {
               onChange={handleInputChange}
             />
           </label>
-
+        )}
+        <div>
           {newQuestion.type === "MC" && (
             <div>
               <label>
@@ -239,20 +244,25 @@ const Teacher = () => {
           </div>
         )}
 
-        <div>
-          <label>
-            Answer:
-            <input
-              type="text"
-              name="answer"
-              value={newQuestion.answer}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
+        {newQuestion.type !== "Import" && (
+          <div>
+            <div>
+              <label>
+                Answer:
+                <input
+                  type="text"
+                  name="answer"
+                  value={newQuestion.answer}
+                  onChange={handleInputChange}
+                />
+              </label>
+            </div>
 
-        <button onClick={handleAddQuestion}>Add Question</button>
-        <button onClick={() => console.log(newQuestion.type)}>Hiiii</button>
+            <button onClick={handleAddQuestion} disabled={newQuestion.collection === ""}>Add Question</button>
+          </div>
+        )}
+
+        {newQuestion.type === "Import" && <Parsing collectionName={newQuestion.collection} />}
       </div>
 
       {Object.entries(
@@ -277,94 +287,119 @@ const Teacher = () => {
                 <li key={question.id}>
                   {editingQuestion === question.id ? (
                     <>
-                      <input
-                        type="text"
-                        name="question"
-                        value={editedQuestion.question}
-                        onChange={(e) =>
-                          setEditedQuestion((prev) => ({
-                            ...prev,
-                            question: e.target.value,
-                          }))
-                        }
-                      />
+                      <div>
+                        <label>
+                          question:
+                          <input
+                            type="text"
+                            name="question"
+                            value={editedQuestion.question}
+                            onChange={(e) =>
+                              setEditedQuestion((prev) => ({
+                                ...prev,
+                                question: e.target.value,
+                              }))
+                            }
+                          />
+                        </label>
+                      </div>
 
                       {question.type === "MC" && (
                         <div>
-                          <input
-                            type="text"
-                            name="op1"
-                            value={editedQuestion.op1}
-                            onChange={(e) =>
-                              setEditedQuestion((prev) => ({
-                                ...prev,
-                                op1: e.target.value,
-                              }))
-                            }
-                          />
-                          <input
-                            type="text"
-                            name="op2"
-                            value={editedQuestion.op2}
-                            onChange={(e) =>
-                              setEditedQuestion((prev) => ({
-                                ...prev,
-                                op2: e.target.value,
-                              }))
-                            }
-                          />
-                          <input
-                            type="text"
-                            name="op3"
-                            value={editedQuestion.op3}
-                            onChange={(e) =>
-                              setEditedQuestion((prev) => ({
-                                ...prev,
-                                op3: e.target.value,
-                              }))
-                            }
-                          />
-                          <input
-                            type="text"
-                            name="op4"
-                            value={editedQuestion.op4}
-                            onChange={(e) =>
-                              setEditedQuestion((prev) => ({
-                                ...prev,
-                                op4: e.target.value,
-                              }))
-                            }
-                          />
+                          <label>
+                            op1:
+                            <input
+                              type="text"
+                              name="op1"
+                              value={editedQuestion.op1}
+                              onChange={(e) =>
+                                setEditedQuestion((prev) => ({
+                                  ...prev,
+                                  op1: e.target.value,
+                                }))
+                              }
+                            />
+                          </label>
+
+                          <label>
+                            op2:
+                            <input
+                              type="text"
+                              name="op2"
+                              value={editedQuestion.op2}
+                              onChange={(e) =>
+                                setEditedQuestion((prev) => ({
+                                  ...prev,
+                                  op2: e.target.value,
+                                }))
+                              }
+                            />
+                          </label>
+
+                          <label>
+                            op3:
+                            <input
+                              type="text"
+                              name="op3"
+                              value={editedQuestion.op3}
+                              onChange={(e) =>
+                                setEditedQuestion((prev) => ({
+                                  ...prev,
+                                  op3: e.target.value,
+                                }))
+                              }
+                            />
+                          </label>
+                          <label>
+                            op4:
+                            <input
+                              type="text"
+                              name="op4"
+                              value={editedQuestion.op4}
+                              onChange={(e) =>
+                                setEditedQuestion((prev) => ({
+                                  ...prev,
+                                  op4: e.target.value,
+                                }))
+                              }
+                            />
+                          </label>
                         </div>
                       )}
 
                       {question.type === "Prompt" && (
                         <div>
-                          <input
-                            type="text"
-                            name="prompt"
-                            value={editedQuestion.prompt}
-                            onChange={(e) =>
-                              setEditedQuestion((prev) => ({
-                                ...prev,
-                                prompt: e.target.value,
-                              }))
-                            }
-                          />
+                          <label>
+                            prompt
+                            <input
+                              type="text"
+                              name="prompt"
+                              value={editedQuestion.prompt}
+                              onChange={(e) =>
+                                setEditedQuestion((prev) => ({
+                                  ...prev,
+                                  prompt: e.target.value,
+                                }))
+                              }
+                            />
+                          </label>
                         </div>
                       )}
+                      <label>
+                        answer:
+                        <input
+                          type="text"
+                          name="answer"
+                          value={editedQuestion.answer}
+                          onChange={(e) =>
+                            setEditedQuestion((prev) => ({
+                              ...prev,
+                              answer: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
 
-                      <input
-                        type="text"
-                        name="answer"
-                        value={editedQuestion.answer}
-                        onChange={(e) =>
-                          setEditedQuestion((prev) => ({
-                            ...prev,
-                            answer: e.target.value,
-                          }))
-                        }
-                      />
                       <button onClick={handleSaveEdit}>Save</button>
                       <button onClick={handleCancelEdit}>Cancel</button>
                     </>
@@ -375,23 +410,69 @@ const Teacher = () => {
                       </h3>
 
                       {question.type === "MC" && (
-                        <p>
-                          op1: {question.op1} op2: {question.op2} op3:{" "}
-                          {question.op3} op4: {question.op4} answer:{" "}
-                          {question.answer}
-                        </p>
-                      )}
-
-                      {(question.type === "SA" ||
-                        question.type === "Rearrange") && (
-                        <p>answer: {question.answer}</p>
+                        <div>
+                          <label>
+                            op1:
+                            <input
+                              type="text"
+                              name="op1"
+                              value={question.op1}
+                              disabled
+                            />
+                          </label>
+                          <label>
+                            op2:
+                            <input
+                              type="text"
+                              name="op2"
+                              value={question.op2}
+                              disabled
+                            />
+                          </label>
+                          <label>
+                            op3:
+                            <input
+                              type="text"
+                              name="op3"
+                              value={question.op3}
+                              disabled
+                            />
+                          </label>
+                          <label>
+                            op4:
+                            <input
+                              type="text"
+                              name="op4"
+                              value={question.op4}
+                              disabled
+                            />
+                          </label>
+                        </div>
                       )}
 
                       {question.type === "Prompt" && (
-                        <p>
-                          prompt: {question.prompt} answer: {question.answer}
-                        </p>
+                        <label>
+                          prompt:
+                          <input
+                            type="text"
+                            name="prompt"
+                            value={question.prompt}
+                            disabled
+                          />
+                        </label>
                       )}
+
+                      <div>
+                        <label>
+                          answer:
+                          <input
+                            type="text"
+                            name="answer"
+                            value={question.answer}
+                            disabled
+                          />
+                        </label>
+                      </div>
 
                       <button onClick={() => handleEdit(question.id)}>
                         Edit
