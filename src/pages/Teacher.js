@@ -180,7 +180,6 @@ const Teacher = () => {
       return (
         newQuestion.collection === "" ||
         newQuestion.question === "" ||
-        newQuestion.prompt === "" ||
         newQuestion.answer === "" ||
         newQuestion.op1 === "" ||
         newQuestion.op2 === "" ||
@@ -336,7 +335,7 @@ const Teacher = () => {
             {/* TODO: Add rename collection */}
             <button onClick={() => handleBulkDelete(collection)}>Delete</button>
           </div>
-          {!collapsedGroups[collection] && (
+          {collapsedGroups[collection] && (
             <ul>
               {group.map((question) => (
                 <li key={question.id}>
