@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
 import { Parsing } from "../components/Parsing";
+import CollectionItem from "../components/CollectionItem";
 
 const Teacher = () => {
   const validTypes = ["MC", "SA", "Rearrange", "Prompt", "Import"];
@@ -31,10 +32,11 @@ const Teacher = () => {
   const [collapsedGroups, setCollapsedGroups] = useState({});
 
   const [data, setData] = useState("");
+  const [updateCollection, setUpdateCollection] = useState(false);
 
   useEffect(() => {
     fetchQuestions();
-  }, [data]);
+  }, [data,updateCollection]);
 
   const fetchQuestions = async () => {
     try {
@@ -118,7 +120,6 @@ const Teacher = () => {
     }
   };
 
-
   const handleAddQuestion = async () => {
     try {
       const { data } = await axios.post(
@@ -153,12 +154,6 @@ const Teacher = () => {
     }));
   };
 
-  const toggleGroupCollapse = (collection) => {
-    setCollapsedGroups((prevState) => ({
-      ...prevState,
-      [collection]: !prevState[collection],
-    }));
-  };
 
   const allowAddQuestion = () => {
     // newQuestion.type === "MC"
@@ -326,14 +321,15 @@ const Teacher = () => {
       ).map(([collection, group]) => (
         <div key={collection}>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <h2
-              onClick={() => toggleGroupCollapse(collection)}
-              style={{ cursor: "pointer", marginRight: "10px" }}
-            >
-              {collection}
-            </h2>
-            {/* TODO: Add rename collection */}
-            <button onClick={() => handleBulkDelete(collection)}>Delete</button>
+
+            <CollectionItem
+              key={collection}
+              collection={collection}
+              handleBulkDelete={handleBulkDelete}
+              setUpdateCollection={setUpdateCollection}
+              updateCollection={updateCollection}
+              setCollapsedGroups={setCollapsedGroups}
+            />
           </div>
           {collapsedGroups[collection] && (
             <ul>
